@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo de Facturas - Río Claro</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #1e1e1e; color: #fff; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 900px; display: flex; gap: 20px; height: 85vh; }
+        .panel { background: #2d2d2d; border-radius: 10px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); display: flex; flex-direction: column; }
+        .upload-panel { flex: 1; border-right: 1px solid #3c3c3c; align-items: center; justify-content: center; text-align: center; }
+        .data-panel { flex: 2; }
+        h2 { color: #14b8a6; margin-top: 0; border-bottom: 2px solid #14b8a6; padding-bottom: 8px; font-size: 1.3rem; width: 100%; text-align: left; }
+        .drop-zone { border: 2px dashed #14b8a6; border-radius: 8px; padding: 30px; cursor: pointer; background: #252526; width: 80%; transition: 0.3s; margin-bottom: 15px; }
+        .drop-zone:hover { background: #323233; }
+        .btn { background: #14b8a6; color: white; border: none; padding: 12px 24px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 0.95rem; }
+        .btn:hover { background: #0f766e; }
+        .status-msg { margin-top: 15px; font-weight: bold; color: #a3e635; min-height: 20px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #252526; border-radius: 6px; overflow: hidden; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #3c3c3c; font-size: 0.9rem; }
+        th { background: #115e59; color: white; font-weight: 600; }
+        tr:hover { background: #2d2d2d; }
+        .badge { background: #166534; color: #bbf7d0; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
+        .nav-btn { background: #3c3c3c; color: #fff; text-decoration: none; padding: 8px 12px; border-radius: 4px; font-size: 0.85rem; align-self: flex-start; margin-bottom: 15px; font-weight: bold; }
+        .nav-btn:hover { background: #4e4e4e; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Panel Izquierdo: Carga del Documento -->
+    <div class="panel upload-panel">
+        <a href="index.html" class="nav-btn">← Volver al Asistente</a>
+        <h2>Simulador Power Automate</h2>
+        <p style="color: #aaa; font-size: 0.9rem; margin-bottom: 25px;">Sube una factura en formato PDF o Imagen para activar la extracción con IA de Azure Document Intelligence.</p>
+        
+        <div class="drop-zone" onclick="document.getElementById('fileInput').click()">
+            <span style="font-size: 2.5rem;">📄</span>
+            <p id="dropText" style="margin: 10px 0 0 0; font-weight: 500;">Arrastra o selecciona tu factura</p>
+            <input type="file" id="fileInput" style="display: none;" onchange="simularProcesamiento(this.files[0])">
+        </div>
+        
+        <div class="status-msg" id="statusMessage"></div>
+    </div>
+
+    <!-- Panel Derecho: Excel de Destino Centralizado -->
+    <div class="panel data-panel">
+        <h2>Excel Centralizado de Gastos (OneDrive)</h2>
+        <p style="color: #aaa; font-size: 0.9rem; margin-bottom: 10px;">Base de datos unificada en tiempo real de las 5 sucursales de Río Claro:</p>
+        
+        <table id="excelTable">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Proveedor ID</th>
+                    <th>Sucursal</th>
+                    <th>Monto Total</th>
+                    <th>Estado de IA</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>01/10/2026</td>
+                    <td>RFC-CHEM772</td>
+                    <td>Guadalajara</td>
+                    <td>\$14,500.00</td>
+                    <td><span class="badge">Procesado</span></td>
+                </tr>
+                <tr>
+                    <td>02/10/2026</td>
+                    <td>RFC-PLAST89</td>
+                    <td>Querétaro</td>
+                    <td>\$8,920.00</td>
+                    <td><span class="badge">Procesado</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function simularProcesamiento(file) {
+        if (!file) return;
+        
+        const status = document.getElementById('statusMessage');
+        const dropText = document.getElementById('dropText');
+        
+        dropText.textContent = file.name;
+        status.innerHTML = "⏳ Disparador activado... Enviando a Azure AI...";
+        status.style.color = "#f59e0b";
+
+        // Simular los pasos lógicos del flujo de Power Automate en tiempo real
+        setTimeout(() => {
+            status.innerHTML = "🧠 Azure AI Document Intelligence extrayendo datos...";
+        }, 1500);
+
+        setTimeout(() => {
+            status.innerHTML = "💾 Insertando fila en Excel Online...";
+        }, 3000);
+
+        setTimeout(() => {
+            status.innerHTML = "✅ ¡Flujo completado! Notificación enviada a Laura.";
+            status.style.color = "#a3e635";
+            
+            // Generar datos aleatorios simulando la extracción real de la IA
+            const sucursales = ["León", "Zapopan", "Aguascalientes", "Querétaro", "Guadalajara"];
+            const sucursalAzar = sucursales[Math.floor(Math.random() * sucursales.length)];
+            const montoAzar = (Math.random() * (25000 - 3000) + 3000).toFixed(2);
+            const hoy = new Date().toLocaleDateString('es-MX');
+
+            // Insertar la nueva fila en el "Excel" visual de la derecha
+            const table = document.getElementById('excelTable').getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow(0); // Insertar al inicio para que se note
+            
+            newRow.innerHTML = `
+                <td>${hoy}</td>
+                <td>RFC-PROV${Math.floor(Math.random() * 900 + 100)}</td>
+                <td>${sucursalAzar}</td>
+                <td>$${parseFloat(montoAzar).toLocaleString('en-US')}</td>
+                <td><span class="badge" style="background: #0284c7; color: #e0f2fe;">Automatizado</span></td>
+            `;
+        }, 4500);
+    }
+</script>
+
+</body>
+</html>

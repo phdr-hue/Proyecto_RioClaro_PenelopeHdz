@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistente Foundry - Distribuidora Río Claro</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #1e1e1e; color: #fff; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .chat-container { width: 100%; max-width: 600px; background: #2d2d2d; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); display: flex; flex-direction: column; height: 75vh; }
+        .chat-header { background: #115e59; padding: 15px; border-top-left-radius: 10px; border-top-right-radius: 10px; text-align: center; font-weight: bold; font-size: 1.2rem; }
+        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .message { max-width: 80%; padding: 12px 16px; border-radius: 8px; line-height: 1.4; font-size: 0.95rem; }
+        .user { background: #0f766e; align-self: flex-end; color: white; }
+        .bot { background: #3d3d3d; align-self: flex-start; color: #e5e7eb; border-left: 4px solid #14b8a6; }
+        .chat-input-area { padding: 15px; background: #252526; display: flex; gap: 10px; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; align-items: center; }
+        input { flex: 1; padding: 12px; border: none; border-radius: 5px; background: #3c3c3c; color: white; font-size: 0.95rem; }
+        input:focus { outline: 2px solid #14b8a6; }
+        button { background: #14b8a6; color: white; border: none; padding: 12px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        button:hover { background: #0f766e; }
+        .mic-btn { background: #374151; font-size: 1.2rem; padding: 10px 15px; }
+        .mic-active { background: #ef4444; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<a href="facturas.html" style="background: #115e59; color: white; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; margin-bottom: 10px; display: inline-block;">📑 Ir a Módulo de Automatización de Facturas</a>
+
+<div class="chat-container">
+    <div class="chat-header" style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+    <img src="logo-rioclaro.png" alt="Logo Río Claro" style="height: 50px; width: auto; border-radius: 5px; object-fit: contain;">
+    <span>🤖 RíoClaro - Asistente Multi-sucursal (Soporte de Voz Activado)</span>
+</div>
+    <div class="chat-messages" id="chatMessages">
+        <div class="message bot">¡Hola! Sistema de Inteligencia Artificial iniciado. ¿Cómo te puedo ayudar hoy? Puedes escribir o presionar el micrófono para hablarme.</div>
+    </div>
+    <div class="chat-input-area">
+        <button class="mic-btn" id="micBtn" onclick="toggleVoice()" title="Hablar por micrófono">🎙️</button>
+        <input type="text" id="userInput" placeholder="Pregunta por un pedido o inventario...">
+        <button onclick="sendMessage()">Enviar</button>
+    </div>
+</div>
+
+<script>
+    // --- INTEGRACIÓN DE VOZ (WEB SPEECH API PARA TOÑO) ---
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition;
+    let isListening = false;
+
+    if (SpeechRecognition) {
+        recognition = new SpeechRecognition();
+        recognition.lang = 'es-MX';
+        recognition.continuous = false;
+        recognition.interimResults = false;
+
+        recognition.onstart = () => {
+            isListening = true;
+            document.getElementById('micBtn').classList.add('mic-active');
+            document.getElementById('userInput').placeholder = "Escuchando tu voz...";
+        };
+
+        recognition.onend = () => {
+            isListening = false;
+            document.getElementById('micBtn').classList.remove('mic-active');
+            document.getElementById('userInput').placeholder = "Pregunta por un pedido o inventario...";
+        };
+
+        recognition.onresult = (event) => {
+            const voiceText = event.results[0][0].transcript;
+            document.getElementById('userInput').value = voiceText;
+            sendMessage(); // Envía automáticamente lo que el usuario dictó
+        };
+    } else {
+        document.getElementById('micBtn').style.display = 'none';
+        console.log("El navegador no soporta reconocimiento de voz.");
+    }
+
+    function toggleVoice() {
+        if (!recognition) return;
+        if (isListening) {
+            recognition.stop();
+        } else {
+            recognition.start();
+        }
+    }
+
+    // --- FUNCIÓN PARA QUE EL BOT HABLE (TEXT TO SPEECH) ---
+    function speakText(text) {
+        if ('speechSynthesis' in window) {
+            // Limpiar etiquetas Markdown del texto antes de hablar
+            const cleanText = text.replace(/\[.*?\]|\*\*|\*/g, "");
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            utterance.lang = 'es-MX';
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+
+    async function sendMessage() {
+        const input = document.getElementById('userInput');
+        const messageText = input.value.trim();
+        if (!messageText) return;
+
+        const chatMessages = document.getElementById('chatMessages');
+        const userDiv = document.createElement('div');
+        userDiv.className = 'message user';
+        userDiv.textContent = messageText;
+        chatMessages.appendChild(userDiv);
+        input.value = '';
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        try {
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: messageText })
+            });
+            const data = await response.json();
+            
+            const botDiv = document.createElement('div');
+            botDiv.className = 'message bot';
+            botDiv.innerHTML = data.response;
+            chatMessages.appendChild(botDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Hacer que la IA responda por voz de regreso
+            speakText(data.response);
+
+        } catch (error) {
+            console.error("Error al conectar con el servidor:", error);
+        }
+    }
+
+    document.getElementById('userInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') sendMessage();
+    });
+</script>
+
+</body>
+</html>
