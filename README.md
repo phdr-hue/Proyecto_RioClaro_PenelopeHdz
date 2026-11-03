@@ -26,6 +26,18 @@ Para levantar y probar la simulación interactiva en su computadora, asegúrese 
    ```
 
 ## 🧪 Pruebas de Validación del Agente
-- **Prueba RAG de Pedidos:** Escriba `¿Cómo va el pedido 105?` (El bot extraerá del índice local que está *Entregado con éxito en León*).
-- **Prueba RAG de Inventario:** Escriba `Inventario de Zapopan` (El bot extraerá del stock local que quedan *50 limpiadores*).
-- **Prueba de Guardrail (Filtro de Seguridad):** Escriba cualquier frase fuera del negocio como `Receta de pizza`. El bot disparará la advertencia automática de restricción de contexto.
+
+### 🔹 Opción 1: Consultas RAG Básicas y Seguridad
+* **Prueba RAG de Pedidos:** Escriba `¿Cómo va el pedido 105?` (El bot extraerá del índice local que está *Entregado con éxito en León*).
+* **Prueba RAG de Inventario:** Escriba `Inventario de Zapopan` (El bot extraerá del stock local que quedan *50 limpiadores*).
+* **Prueba de Guardrail (Filtro de Seguridad):** Escriba cualquier frase fuera del negocio como `Receta de pizza`. El bot disparará la advertencia automática de restricción de contexto.
+
+### 🔹 Opción 2: Gestión de Flujos Avanzados e Interacción
+* **Prueba de Intención de Compra / Alta:** Escriba o seleccione la opción para iniciar un nuevo pedido o dar de alta un cliente. El asistente desplegará el flujo guiado interactivo solicitando los datos obligatorios de la sucursal.
+* **Prueba de Soporte Técnico Humano:** Solicite hablar con un agente o escribe `soporte técnico`. El bot simulará la transferencia de la sesión y el guardado del historial de la conversación para la sucursal correspondiente.
+
+### 🔹 Opción 3: Consultas Multisucursal y Consolidación de Datos
+* **Prueba de Reporte Consolidado:** Solicite un balance global o escribe `Estado general de sucursales`. El bot procesará de forma simulada la unión de los micro-índices de las 5 sucursales (León, Zapopan, etc.) para entregar una respuesta unificada de disponibilidad.
+
+### ⚠️ Pruebas de Manejo de Errores y Excepciones
+* **Prueba de Caída de Servicio Simulado (Timeout / Fallback):** Intente ingresar un ID de pedido inexistente o fuerce una consulta vacía. El bot demostrará su lógica de resiliencia devolviendo un mensaje controlado de error (*"Servicio temporalmente en mantenimiento local, intente más tarde"*) en lugar de romper la ejecución del servidor web, garantizando la continuidad de la interfaz de usuario.
