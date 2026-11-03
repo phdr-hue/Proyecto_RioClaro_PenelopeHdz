@@ -30,7 +30,8 @@ Para levantar y probar la simulación interactiva en su computadora, asegúrese 
 ### 🔹 Opción 1: Consultas RAG Básicas y Seguridad
 * **Prueba RAG de Pedidos:** Escriba `¿Cómo va el pedido 105?` (El bot extraerá del índice local que está *Entregado con éxito en León*).
 * **Prueba RAG de Inventario:** Escriba `Inventario de Zapopan` (El bot extraerá del stock local que quedan *50 limpiadores*).
-* **Prueba de Guardrail (Filtro de Seguridad):** Escriba cualquier frase fuera del negocio como `Receta de pizza`. El bot disparará la advertencia automática de restricción de contexto.
+* **Prueba de Guardrail (Filtro de Seguridad):** Escriba cualquier frase fuera del negocio como `arroz` o `Receta de pizza`. El bot disparará la restricción de contexto devolviendo textualmente:
+  > ⚠️ **[Restricción de Contexto / Guardrail Activo]:** Lo siento, soy un asistente especializado exclusivamente en la operación empresarial de Distribuidora Río Claro. No tengo autorización para responder preguntas ajenas a logística o almacén (Clasificación rechazada: FUERA_DE_CONTEXTO_DETECTADO). Por favor, realiza una consulta corporativa válida.
 
 ### 🔹 Opción 2: Gestión de Flujos Avanzados e Interacción
 * **Prueba de Intención de Compra / Alta:** Escriba o seleccione la opción para iniciar un nuevo pedido o dar de alta un cliente. El asistente desplegará el flujo guiado interactivo solicitando los datos obligatorios de la sucursal.
